@@ -55,6 +55,11 @@
     --radius-full: 9999px;
 }
 
+/* Global Hidden Utility Rule */
+.hidden {
+    display: none !important;
+}
+
 /* Dark Mode Theme Support */
 [data-theme="dark"] {
     --bg-main: #0f172a;
