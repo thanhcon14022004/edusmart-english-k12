@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: edusmart-english-k12
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

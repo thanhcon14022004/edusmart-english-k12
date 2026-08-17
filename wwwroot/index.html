@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSmart - Nền tảng học tập & thi trực tuyến</title>
+    <meta name="description" content="Nền tảng học tập trực tuyến thông minh cho học sinh, giáo viên và quản lý giáo dục.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Top Navigation Header (Sticky 68px) -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    <span class="logo-text">Edu<span>Smart</span></span>
+                    <span class="badge badge-pro"><i class="fa-solid fa-language"></i> K-12 English Portal</span>
+                </div>
+                <!-- Smart Search Bar with Ctrl+K -->
+                <div class="header-search-bar">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="global-search-input" placeholder="Tìm bài học, từ vựng, đề thi Tiếng Anh... (Ctrl + K)" onkeyup="handleGlobalSearch(event)">
+                    <kbd class="search-kbd">Ctrl K</kbd>
+                </div>
+            </div>
+
+            <div class="header-right" id="header-user-area">
+                <!-- Gamification Counters -->
+                <div class="gamification-chips">
+                    <div class="streak-chip" title="Chuỗi 12 ngày học tập liên tiếp">
+                        <i class="fa-solid fa-fire-flame-curved"></i> 12 Ngày
+                    </div>
+                    <div class="xp-chip" title="2,480 Điểm kinh nghiệm tích lũy">
+                        <i class="fa-solid fa-bolt"></i> 2,480 XP
+                    </div>
+                </div>
+
+                <button class="theme-toggle-btn" onclick="toggleAppTheme()" title="Đổi Chế Độ Giao Diện Sáng / Tối">
+                    <i class="fa-solid fa-sun" id="theme-icon"></i>
+                </button>
+                <div class="user-profile" id="user-profile-badge">
+                    <img id="user-avatar" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80" alt="Avatar" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name" id="user-name">Trần Minh Quân</span>
+                        <span class="user-role-tag" id="user-role-tag">📘 Học sinh THCS - Lớp 6</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="handleLogout()" title="Đăng Xuất" style="margin-left: 0.75rem;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <!-- Student Menu -->
+                    <div class="menu-group" id="menu-student">
+                        <div class="menu-title">GÓC HỌC TIẾNG ANH K-12</div>
+                        <a href="#" class="nav-item active" onclick="navTo('student-dashboard', event)">
+                            <i class="fa-solid fa-shapes"></i> Trang Chủ Học Tập
+                        </a>
+                        <a href="#" class="nav-item" onclick="navTo('courses-view', event)">
+                            <i class="fa-solid fa-book-open-reader"></i> Khóa Học Tiếng Anh
+                        </a>
+                        <a href="#" class="nav-item" onclick="navTo('exams-list-view', event)">
+                            <i class="fa-solid fa-pen-ruler"></i> Phòng Thi Trực Tuyến
+                        </a>
+                        <a href="#" class="nav-item" onclick="navTo('progress-view', event)">
+                            <i class="fa-solid fa-chart-line-up"></i> Tiến Độ & Điểm Số
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- "Học Tiếp Bài Dở" Widget -->
+                <div class="sidebar-continue-widget" onclick="resumeLastLesson()">
+                    <div class="widget-title">
+                        <i class="fa-solid fa-clock-rotate-left"></i> HỌC TIẾP BÀI DỞ
+                    </div>
+                    <h5 id="sidebar-last-lesson-title">Lesson 1: Vocabulary & Listening</h5>
+                    <span id="sidebar-last-subject-name">Môn: Tiếng Anh 6 (Global Success)</span>
+                    <div class="progress-bar-container" style="height: 6px; margin-top: 0.5rem;">
+                        <div class="progress-bar" id="sidebar-continue-progress" style="width: 65%;"></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer" style="padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                    <div class="system-status" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        <div class="status-indicator online" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-emerald);"></div>
+                        <span>EduSmart K-12 Cloud Active</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Display Area -->
+            <main class="content-body" id="main-content">
+
+                <!-- 1. STUDENT DASHBOARD VIEW (2-COLUMN GRID) -->
+                <section id="view-student-dashboard" class="page-view active">
+                    <div class="dashboard-grid-layout">
+                        <!-- Main Left Column -->
+                        <div class="dashboard-main-col">
+                            <!-- Hero Indigo Card Banner -->
+                            <div class="hero-indigo-card">
+                                <div class="hero-badge">
+                                    <i class="fa-solid fa-graduation-cap"></i> K-12 Student Portal
+                                </div>
+                                <h2>Xin chào, <span id="banner-user-name">Trần Minh Quân</span>! 👋</h2>
+                                <p>Chào mừng bạn đến với EduSmart - Nền tảng học tập & thi trực tuyến thông minh dành cho học sinh K-12. 💪</p>
+                                
+                                <div class="hero-stats-row">
+                                    <div class="hero-stat-pill">
+                                        <span class="stat-num" id="stat-hero-gpa">8.8 / 10</span>
+                                        <span class="stat-lbl">Điểm TB Học Tập</span>
+                                    </div>
+                                    <div class="hero-stat-pill">
+                                        <span class="stat-num">🔥 12 Ngày</span>
+                                        <span class="stat-lbl">Chuỗi Học Liên Tục</span>
+                                    </div>
+                                    <button class="btn btn-amber btn-lg hero-cta-btn" onclick="navTo('courses-view', event)">
+                                        <i class="fa-solid fa-book-open-reader"></i> Khám Phá Bài Học Ngay
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Video Trailer Showcase Card (English Learning Theme) -->
+                            <div class="video-trailer-card">
+                                <div class="video-trailer-header">
+                                    <div class="video-trailer-title">
+                                        <i class="fa-solid fa-circle-play" style="color: var(--accent-rose);"></i> Video Giới Thiệu Khóa Học Tiếng Anh K-12 - EduSmart English
+                                    </div>
+                                    <span class="badge badge-purple"><i class="fa-solid fa-language"></i> Tiếng Anh K-12</span>
+                                </div>
+                                <div class="video-responsive-wrapper">
+                                    <iframe id="trailer-video-iframe" src="https://www.youtube.com/embed/juKd26qkNAw?rel=0&autoplay=0&enablejsapi=1" title="EduSmart English K-12 Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div>
+
+                            <!-- Platform Introduction Section -->
+                            <div class="platform-intro-section">
+                                <div class="intro-section-header">
+                                    <h3>🌟 Nền Tảng Luyện Tiếng Anh Trực Tuyến Đột Phá K-12</h3>
+                                    <p>EduSmart English mang đến giải pháp học Tiếng Anh toàn diện từ Lớp 1 đến Lớp 12, giúp học sinh bứt phá kỹ năng Nghe - Nói - Đọc - Viết & luyện thi chứng chỉ quốc tế.</p>
+                                </div>
+
+                                <div class="intro-features-grid">
+                                    <div class="intro-feature-card">
+                                        <div class="intro-feature-icon icon-blue">
+                                            <i class="fa-solid fa-graduation-cap"></i>
+                                        </div>
+                                        <div class="intro-feature-content">
+                                            <h4>Lộ Trình Tiếng Anh K-12 & Cambridge</h4>
+                                            <p>Khóa học thiết kế chuẩn khung Bộ GD&ĐT & Cambridge (Starters, Movers, Flyers, KET, PET, THPT Quốc Gia, IELTS).</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="intro-feature-card">
+                                        <div class="intro-feature-icon icon-emerald">
+                                            <i class="fa-solid fa-video"></i>
+                                        </div>
+                                        <div class="intro-feature-content">
+                                            <h4>Bài Giảng Video & Luyện Từ Vựng Tức Thì</h4>
+                                            <p>Học phát âm Phonics, cấu trúc Ngữ pháp qua video sinh động và làm bài trắc nghiệm củng cố ngay dưới bài học.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="intro-feature-card">
+                                        <div class="intro-feature-icon icon-amber">
+                                            <i class="fa-solid fa-file-pen"></i>
+                                        </div>
+                                        <div class="intro-feature-content">
+                                            <h4>Thi Trắc Nghiệm Tiếng Anh & Chấm Điểm</h4>
+                                            <p>Đồng hồ đếm ngược thời gian thực, ma trận câu hỏi Grammar, Vocabulary & Reading kèm giải thích đáp án chi tiết.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="intro-feature-card">
+                                        <div class="intro-feature-icon icon-purple">
+                                            <i class="fa-solid fa-trophy"></i>
+                                        </div>
+                                        <div class="intro-feature-content">
+                                            <h4>Gamification & Thống Kê Điểm XP</h4>
+                                            <p>Tích lũy điểm thưởng XP, duy trì chuỗi ngày học Tiếng Anh 🔥 hàng ngày và đua TOP Bảng Xếp Hạng Tuần.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Call to Action Banner -->
+                                <div class="intro-cta-banner">
+                                    <h4>Bạn Đã Sẵn Sàng Chinh Phục Tiếng Anh K-12? 🚀</h4>
+                                    <p>Truy cập ngay kho bài học Tiếng Anh theo khối lớp của bạn để bắt đầu học ngay!</p>
+                                    <button class="btn btn-primary btn-lg" onclick="navTo('courses-view', event)">
+                                        <i class="fa-solid fa-book-open-reader"></i> Khám Phá Khóa Học Tiếng Anh Ngay
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side Panel Right Column -->
+                        <div class="dashboard-side-col">
+                            <!-- Top 3 Weekly Leaderboard Widget -->
+                            <div class="side-panel-card glass-card">
+                                <div class="panel-card-title">
+                                    <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i> BẢNG XẾP HẠNG TUẦN
+                                </div>
+                                <div class="leaderboard-list">
+                                    <div class="leaderboard-item">
+                                        <span class="rank-badge">🥇 1</span>
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                        <div class="rank-info">
+                                            <strong>Nguyễn Thu Hà</strong>
+                                            <span>Lớp 6A • 3,120 XP</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <span class="rank-badge">🥈 2</span>
+                                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                        <div class="rank-info">
+                                            <strong>Trần Minh Quân</strong>
+                                            <span>Lớp 6 • 2,480 XP</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <span class="rank-badge">🥉 3</span>
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                        <div class="rank-info">
+                                            <strong>Lê Hoàng Nam</strong>
+                                            <span>Lớp 8 • 2,150 XP</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Weekly Calendar & Reminders Widget -->
+                            <div class="side-panel-card glass-card">
+                                <div class="panel-card-title">
+                                    <i class="fa-solid fa-calendar-days" style="color: var(--accent-primary);"></i> LỊCH HỌC TIẾNG ANH TUẦN
+                                </div>
+                                <div class="calendar-events-list">
+                                    <div class="event-item">
+                                        <div class="event-date">
+                                            <strong>T2</strong>
+                                            <span>18/08</span>
+                                        </div>
+                                        <div class="event-details">
+                                            <strong>Kiểm Tra 15p Grammar</strong>
+                                            <span>Present Simple & Progressive</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-item">
+                                        <div class="event-date">
+                                            <strong>T4</strong>
+                                            <span>20/08</span>
+                                        </div>
+                                        <div class="event-details">
+                                            <strong>Luyện Từ Vựng Unit 1 & 2</strong>
+                                            <span>School Subjects & House Rooms</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-item">
+                                        <div class="event-date">
+                                            <strong>T6</strong>
+                                            <span>22/08</span>
+                                        </div>
+                                        <div class="event-details">
+                                            <strong>Luyện Thi Tiếng Anh 6</strong>
+                                            <span>Global Success Unit 1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. COURSE CATALOG VIEW -->
+                <section id="view-courses-view" class="page-view">
+                    <div id="courses-catalog-container">
+                        <!-- Student Assigned Class Banner -->
+                        <div class="assigned-class-banner glass-card" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(6, 182, 212, 0.12)); border: 1.5px solid var(--accent-primary); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                            <div>
+                                <span class="badge badge-purple" style="margin-bottom: 0.5rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                                    <i class="fa-solid fa-lock"></i> Lộ Trình Học Đã Khóa Theo Lớp Đăng Ký
+                                </span>
+                                <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">
+                                    🎓 Khóa Học Tiếng Anh Dành Cho: <span id="assigned-class-name-display" style="color: var(--accent-primary);">Lớp 6</span>
+                                </h3>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+                                    Tài khoản học sinh <strong id="assigned-user-name-display">Trần Minh Quân</strong> được phân bổ lộ trình Tiếng Anh K-12 riêng biệt cho lớp của bạn.
+                                </p>
+                            </div>
+                            <div class="class-lock-chip" style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.75rem 1.25rem; border-radius: var(--radius-md); text-align: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-graduation-cap" style="font-size: 1.8rem; color: var(--accent-primary);"></i>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-top: 0.2rem;" id="assigned-class-badge">Lớp 6</div>
+                            </div>
+                        </div>
+
+                        <!-- Subjects Grid (Auto-filtered to Student Class) -->
+                        <div class="subjects-grid" id="subjects-container" style="margin-top: 1rem;"></div>
+                    </div>
+                </section>
+
+                <!-- 2B. DEDICATED LESSON PLAYER PAGE VIEW -->
+                <section id="view-lesson-player-view" class="page-view">
+                    <div id="course-player-wrapper">
+                        <div class="breadcrumb" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <div>
+                                <a href="#" onclick="navTo('courses-view', event)"><i class="fa-solid fa-arrow-left"></i> Danh sách môn học</a> / <span id="breadcrumb-subject">Tiếng Anh 6 - Global Success</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline" onclick="navTo('courses-view', event)">
+                                <i class="fa-solid fa-shapes"></i> Đổi Môn Học Khác
+                            </button>
+                        </div>
+
+                        <div class="course-player-container">
+                            <!-- Lesson Content Navigation Sidebar -->
+                            <div class="course-sidebar glass-card">
+                                <div class="course-header">
+                                    <h3 id="course-title-sidebar">Tiếng Anh 6 - Global Success</h3>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="course-progress-bar" style="width: 50%;"></div>
+                                    </div>
+                                    <span class="progress-text" id="course-progress-text">Đã hoàn thành 1/2 bài</span>
+                                </div>
+                                <div class="chapters-accordion" id="chapters-accordion-container">
+                                    <!-- Dynamic Chapters & Lessons -->
+                                </div>
+                            </div>
+
+                            <!-- Lesson Main Display Window -->
+                            <div class="lesson-display glass-card" id="lesson-display-box">
+                                <div class="lesson-header-bar">
+                                    <h2 id="lesson-active-title">Lesson 1: Vocabulary & Listening - School Subjects</h2>
+                                    <button class="btn btn-success" id="btn-complete-lesson" onclick="toggleCompleteCurrentLesson()">
+                                        <i class="fa-solid fa-circle-check"></i> <span id="complete-btn-text">Đánh Dấu Đã Học</span>
+                                    </button>
+                                </div>
+
+                                <div class="video-container" id="video-wrapper">
+                                    <iframe id="lesson-video-iframe" src="https://www.youtube.com/embed/juKd26qkNAw?enablejsapi=1" title="Bài giảng" frameborder="0" allowfullscreen></iframe>
+                                </div>
+
+                                <div class="lesson-article" id="lesson-text-wrapper">
+                                    <h3><i class="fa-solid fa-book-open"></i> Nội dung lý thuyết bài học</h3>
+                                    <div class="article-content" id="lesson-article-content">
+                                        <!-- Lesson content -->
+                                    </div>
+                                </div>
+
+                                <div class="lesson-quiz-section mt-6" id="lesson-quiz-wrapper" style="margin-top: 2rem;">
+                                    <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-list-check" style="color: var(--accent-secondary);"></i> Câu hỏi trắc nghiệm củng cố bài học</h3>
+                                    <div class="quiz-questions-list" id="lesson-quiz-container">
+                                        <!-- Dynamic Practice Questions -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. ONLINE EXAMINATION & QUIZ VIEW -->
+                <section id="view-take-exam-view" class="page-view">
+                    <div class="exam-header-bar glass-card">
+                        <div>
+                            <span class="badge badge-purple" id="exam-tag-type">Bài Thi Luyện Tập</span>
+                            <h2 id="exam-active-title">Bài kiểm tra 15 phút: Present Simple & School Vocabulary</h2>
+                        </div>
+                        <div class="timer-box" id="timer-box">
+                            <i class="fa-solid fa-stopwatch"></i>
+                            <span id="exam-timer-display">15:00</span>
+                        </div>
+                    </div>
+
+                    <div class="exam-workspace">
+                        <div class="questions-flow" id="exam-questions-container">
+                            <!-- Dynamic Question Items -->
+                        </div>
+
+                        <!-- Questions Navigation Palette -->
+                        <div class="exam-palette glass-card">
+                            <h4>Danh Sách Câu Hỏi</h4>
+                            <div class="palette-grid" id="palette-grid">
+                                <!-- Question buttons -->
+                            </div>
+                            <div class="palette-actions">
+                                <button class="btn btn-primary btn-block btn-lg" onclick="confirmSubmitExam()">
+                                    <i class="fa-solid fa-paper-plane"></i> Nộp Bài Thi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. EXAM RESULT & EXPLANATION REVIEW VIEW -->
+                <section id="view-exam-result-view" class="page-view">
+                    <div class="result-card glass-card">
+                        <div class="result-badge-header">
+                            <div class="score-circle" id="score-circle-display">
+                                <span class="score-num" id="result-score-val">10.0</span>
+                                <span class="score-max">/ 10</span>
+                            </div>
+                            <div class="result-info">
+                                <h2 id="result-exam-title">Kết Quả Bài Kiểm Tra</h2>
+                                <p class="result-status-text" id="result-status-text">Chúc mừng! Bạn đã ĐẠT bài kiểm tra xuất sắc.</p>
+                                <div class="result-stats-row">
+                                    <span><i class="fa-solid fa-circle-check color-success"></i> Đúng: <strong id="result-correct-count">4/4</strong></span>
+                                    <span><i class="fa-solid fa-clock"></i> Thời gian: <strong>8 phút 42 giây</strong></span>
+                                    <span><i class="fa-solid fa-percent"></i> Tỷ lệ: <strong id="result-percentage">100%</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-section mt-6">
+                            <h3><i class="fa-solid fa-list-check"></i> Xem Lại Đáp Án & Lời Giải Chi Tiết</h3>
+                            <div class="questions-review-list" id="questions-review-container">
+                                <!-- Dynamic Reviews -->
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-6">
+                            <button class="btn btn-outline" onclick="navTo('student-dashboard', event)">
+                                <i class="fa-solid fa-arrow-left"></i> Quay Về Trang Chủ
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. EXAMS LIST VIEW (PHÒNG THI TRỰC TUYẾN) -->
+                <section id="view-exams-list-view" class="page-view">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-file-pen"></i> Phòng Thi & Luyện Tập Trực Tuyến</h2>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <div class="search-input-wrapper">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="exam-search-input" class="form-input" placeholder="Tìm tên đề thi..." onkeyup="searchExams(this.value)">
+                            </div>
+                            <div class="class-selector-tabs" id="exam-filter-tabs">
+                                <button class="tab-btn active" onclick="filterExams('all')">Tất Cả Đề Thi</button>
+                                <button class="tab-btn" onclick="filterExams('Practice')">Luyện Tập</button>
+                                <button class="tab-btn" onclick="filterExams('Midterm')">Giữa Kỳ</button>
+                                <button class="tab-btn" onclick="filterExams('Final')">Cuối Kỳ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exams-quick-list mt-6" id="all-exams-container">
+                        <!-- Dynamic exams loaded via JS -->
+                    </div>
+                </section>
+
+                <!-- 6. PROGRESS & ANALYTICS VIEW -->
+                <section id="view-progress-view" class="page-view">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-chart-line"></i> Báo Cáo Tiến Độ & Thống Kê Điểm Số</h2>
+                    </div>
+
+                    <div class="stats-cards-grid" id="student-stats-grid">
+                        <div class="stat-card glass-card">
+                            <i class="fa-solid fa-circle-check stat-icon color-indigo"></i>
+                            <div>
+                                <h4 id="stat-completed-lessons">1</h4>
+                                <span>Bài học đã hoàn thành</span>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <i class="fa-solid fa-pen-ruler stat-icon color-pink"></i>
+                            <div>
+                                <h4 id="stat-exams-taken">1</h4>
+                                <span>Bài kiểm tra đã làm</span>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <i class="fa-solid fa-award stat-icon color-emerald"></i>
+                            <div>
+                                <h4 id="stat-avg-score">10.0</h4>
+                                <span>Điểm số trung bình</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subject-progress-list mt-6" id="subject-progress-container">
+                        <!-- Progress per subject -->
+                    </div>
+
+                    <!-- Exam History Log -->
+                    <div class="history-panel glass-card mt-6" style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-cyan);"></i> Nhật Ký Lịch Sử Làm Bài Thi</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tên Bài Kiểm Tra</th>
+                                        <th>Thời Gian Nộp Bài</th>
+                                        <th>Điểm Số</th>
+                                        <th>Trạng Thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exam-history-tbody">
+                                    <!-- Dynamic rows loaded via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (ĐĂNG NHẬP / ĐĂNG KÝ) -->
+    <div class="modal-overlay hidden" id="auth-modal">
+        <div class="modal-card glass-card">
+            <div class="modal-header-tabs">
+                <div class="modal-tabs">
+                    <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+                    </button>
+                    <button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">
+                        <i class="fa-solid fa-user-plus"></i> Đăng Ký Tài Khoản
+                    </button>
+                </div>
+                <button class="modal-close-btn" onclick="closeAuthModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="auth-alert-msg" class="auth-alert hidden"></div>
+
+                <!-- LOGIN FORM -->
+                <form id="login-form" onsubmit="submitLogin(event)">
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-user"></i> Tên đăng nhập hoặc Email</label>
+                        <input type="text" id="login-username" class="modal-input" placeholder="Ví dụ: student1 hoặc hocsinh.quan@edu.vn" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+                        <input type="password" id="login-password" class="modal-input" placeholder="Nhập mật khẩu (Mặc định: student123)" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập (Tự Động Vào Lớp)
+                    </button>
+
+                    <!-- Quick Demo Chips -->
+                    <div class="quick-login-chips mt-4">
+                        <span>Đăng nhập nhanh mẫu:</span>
+                        <div class="chip-group">
+                            <button type="button" class="chip-btn" onclick="quickLogin('student1', 'student123')">Học Sinh Lớp 6</button>
+                            <button type="button" class="chip-btn" onclick="quickLogin('student2', 'student123')">Học Sinh Lớp 7</button>
+                            <button type="button" class="chip-btn" onclick="quickLogin('student3', 'student123')">Học Sinh Lớp 8</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="register-form" class="hidden" onsubmit="submitRegister(event)">
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-signature"></i> Họ và Tên học sinh</label>
+                        <input type="text" id="reg-fullname" class="modal-input" placeholder="Nhập họ và tên đầy đủ" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-user-gear"></i> Tên đăng nhập</label>
+                        <input type="text" id="reg-username" class="modal-input" placeholder="Tên tài khoản (viết liền không dấu)" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-envelope"></i> Email (Tùy chọn)</label>
+                        <input type="email" id="reg-email" class="modal-input" placeholder="email@hocsinh.edu.vn">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-layer-group"></i> Chọn Khối / Lớp Đăng Ký Học</label>
+                        <select id="reg-gradeclass" class="modal-input" required>
+                            <!-- Populated dynamically from API -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-lock"></i> Mật khẩu đăng nhập</label>
+                        <input type="password" id="reg-password" class="modal-input" placeholder="Tạo mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
+                        <i class="fa-solid fa-user-plus"></i> Đăng Ký Tài Khoản & Vào Lớp Ngay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="js/app.js?v=4"></script>
+</body>
+</html>
