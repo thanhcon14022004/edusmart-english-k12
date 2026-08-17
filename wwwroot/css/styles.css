@@ -1482,15 +1482,52 @@ body {
     color: var(--text-muted);
     font-weight: 500;
 }
-    border-radius: var(--radius-full);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
+
+/* Modal Form Inputs & Controls */
+.modal-input {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-top: 0.35rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
-.chip-btn:hover {
-    background: var(--accent-primary);
-    color: #fff;
+.modal-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    background: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 1.15rem;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.auth-alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+    background: rgba(244, 63, 94, 0.1);
+    color: var(--accent-rose);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    text-align: center;
 }
 
 /* Utilities */
