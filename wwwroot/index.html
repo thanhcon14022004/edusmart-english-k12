@@ -519,63 +519,106 @@
     <!-- AUTHENTICATION MODAL (ĐĂNG NHẬP / ĐĂNG KÝ) -->
     <div class="modal-overlay hidden" id="auth-modal">
         <div class="modal-card glass-card">
-            <div class="modal-header-tabs">
-                <div class="modal-tabs">
-                    <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">
-                        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
-                    </button>
-                    <button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">
-                        <i class="fa-solid fa-user-plus"></i> Đăng Ký Tài Khoản
-                    </button>
+            <!-- Modal Header Branding -->
+            <div class="modal-top-branding">
+                <div class="brand-badge-row">
+                    <div class="modal-brand-icon">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-brand-title">EduSmart English</h3>
+                        <p class="modal-brand-sub">Hệ Thống Luyện Tiếng Anh K-12</p>
+                    </div>
                 </div>
-                <button class="modal-close-btn" onclick="closeAuthModal()">&times;</button>
+                <button class="modal-close-btn" onclick="closeAuthModal()" title="Đóng">&times;</button>
+            </div>
+
+            <!-- Modal Segmented Nav Tabs -->
+            <div class="modal-tabs-segmented">
+                <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+                </button>
+                <button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">
+                    <i class="fa-solid fa-user-plus"></i> Đăng Ký Tài Khoản
+                </button>
             </div>
 
             <div class="modal-body">
                 <div id="auth-alert-msg" class="auth-alert hidden"></div>
 
-                <!-- LOGIN FORM -->
+                <!-- 1. LOGIN FORM -->
                 <form id="login-form" onsubmit="submitLogin(event)">
+                    <!-- Prominent 1-Click Quick Login Cards -->
+                    <div class="quick-login-wrapper mb-4">
+                        <div class="quick-login-label">
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-amber);"></i> ĐĂNG NHẬP NHANH (1-CLICK DÙNG THỬ)
+                        </div>
+                        <div class="quick-cards-grid">
+                            <div class="quick-card-item" onclick="quickLogin('student1', 'student123')">
+                                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                <div class="quick-card-info">
+                                    <strong>Trần Minh Quân</strong>
+                                    <span>Lớp 6 (THCS)</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                            </div>
+
+                            <div class="quick-card-item" onclick="quickLogin('student2', 'student123')">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                <div class="quick-card-info">
+                                    <strong>Nguyễn Thu Hà</strong>
+                                    <span>Lớp 7 (THCS)</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                            </div>
+
+                            <div class="quick-card-item" onclick="quickLogin('student3', 'student123')">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Avatar">
+                                <div class="quick-card-info">
+                                    <strong>Lê Hoàng Nam</strong>
+                                    <span>Lớp 8 (THCS)</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-divider">
+                        <span>hoặc nhập tài khoản cá nhân</span>
+                    </div>
+
                     <div class="form-group">
                         <label><i class="fa-solid fa-user"></i> Tên đăng nhập hoặc Email</label>
                         <input type="text" id="login-username" class="modal-input" placeholder="Ví dụ: student1 hoặc hocsinh.quan@edu.vn" required>
                     </div>
+
                     <div class="form-group">
                         <label><i class="fa-solid fa-lock"></i> Mật khẩu</label>
                         <input type="password" id="login-password" class="modal-input" placeholder="Nhập mật khẩu (Mặc định: student123)" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
-                        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập (Tự Động Vào Lớp)
-                    </button>
 
-                    <!-- Quick Demo Chips -->
-                    <div class="quick-login-chips mt-4">
-                        <span>Đăng nhập nhanh mẫu:</span>
-                        <div class="chip-group">
-                            <button type="button" class="chip-btn" onclick="quickLogin('student1', 'student123')">Học Sinh Lớp 6</button>
-                            <button type="button" class="chip-btn" onclick="quickLogin('student2', 'student123')">Học Sinh Lớp 7</button>
-                            <button type="button" class="chip-btn" onclick="quickLogin('student3', 'student123')">Học Sinh Lớp 8</button>
-                        </div>
-                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg mt-4" style="font-weight: 700; width: 100%;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập & Vào Học Ngay
+                    </button>
                 </form>
 
-                <!-- REGISTER FORM -->
+                <!-- 2. REGISTER FORM -->
                 <form id="register-form" class="hidden" onsubmit="submitRegister(event)">
                     <div class="form-group">
                         <label><i class="fa-solid fa-signature"></i> Họ và Tên học sinh</label>
-                        <input type="text" id="reg-fullname" class="modal-input" placeholder="Nhập họ và tên đầy đủ" required>
+                        <input type="text" id="reg-fullname" class="modal-input" placeholder="Nhập họ và tên đầy đủ của học sinh" required>
                     </div>
                     <div class="form-group">
                         <label><i class="fa-solid fa-user-gear"></i> Tên đăng nhập</label>
-                        <input type="text" id="reg-username" class="modal-input" placeholder="Tên tài khoản (viết liền không dấu)" required>
+                        <input type="text" id="reg-username" class="modal-input" placeholder="Viết liền không dấu (VD: nguyenvana)" required>
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-envelope"></i> Email (Tùy chọn)</label>
-                        <input type="email" id="reg-email" class="modal-input" placeholder="email@hocsinh.edu.vn">
+                        <label><i class="fa-solid fa-envelope"></i> Email liên hệ</label>
+                        <input type="email" id="reg-email" class="modal-input" placeholder="hocsinh@gmail.com (Không bắt buộc)">
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-layer-group"></i> Chọn Khối / Lớp Đăng Ký Học</label>
-                        <select id="reg-gradeclass" class="modal-input" required>
+                        <label><i class="fa-solid fa-layer-group"></i> Chọn Khối Lớp Đăng Ký Học (Đăng ký lớp nào học lớp đó)</label>
+                        <select id="reg-gradeclass" class="modal-input" style="cursor: pointer;" required>
                             <!-- Populated dynamically from API -->
                         </select>
                     </div>
