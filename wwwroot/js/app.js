@@ -469,6 +469,43 @@ async function loadQuickExams() {
 
 let currentQuestionIndex = 0;
 
+// Fullscreen Exam Mode Helpers
+function enterExamFullscreen() {
+    document.body.classList.add('in-exam-mode');
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log("Fullscreen request:", err));
+    } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+    }
+}
+
+function exitExamFullscreen() {
+    document.body.classList.remove('in-exam-mode');
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => console.log("Exit fullscreen:", err));
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+}
+
+// Fullscreen change listener to enforce exam focus
+document.addEventListener('fullscreenchange', () => {
+    if (document.body.classList.contains('in-exam-mode') && !document.fullscreenElement) {
+        // If student exits fullscreen while taking exam, prompt to re-enter!
+        setTimeout(() => {
+            if (document.body.classList.contains('in-exam-mode')) {
+                alert("⚠️ CHÚ Ý BÀI THI: Phòng thi yêu cầu chế độ Toàn Màn Hình (Fullscreen) để làm bài! Hệ thống tự động chuyển lại Toàn Màn Hình.");
+                enterExamFullscreen();
+            }
+        }, 300);
+    }
+});
+
 // Start Online Exam with Countdown Timer & Single-Question Step-by-Step TTS Wizard
 async function startExam(examId) {
     try {
@@ -478,6 +515,9 @@ async function startExam(examId) {
         currentQuestionIndex = 0;
 
         navTo('take-exam-view');
+
+        // Lock Browser into Fullscreen Mode
+        enterExamFullscreen();
 
         document.getElementById('exam-active-title').innerText = currentExam.title;
         document.getElementById('exam-tag-type').innerText = currentExam.type || 'Bài Thi Luyện Tập';
@@ -664,6 +704,9 @@ function updateTimerDisplay() {
 async function confirmSubmitExam() {
     if (examTimerInterval) clearInterval(examTimerInterval);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+    // Exit Fullscreen Mode on Exam Submission
+    exitExamFullscreen();
 
     const answersPayload = Object.keys(userAnswers).map(qId => ({
         questionId: parseInt(qId),

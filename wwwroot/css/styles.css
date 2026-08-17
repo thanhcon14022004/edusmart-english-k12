@@ -1534,3 +1534,21 @@ body {
     color: var(--text-muted);
     margin-bottom: 1.25rem;
 }
+
+/* FULLSCREEN EXAM LOCK MODE STYLES */
+body.in-exam-mode .top-header,
+body.in-exam-mode .sidebar {
+    display: none !important;
+}
+
+body.in-exam-mode .main-content {
+    margin-left: 0 !important;
+    padding-top: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+body.in-exam-mode #view-take-exam-view {
+    min-height: 100vh;
+    padding: 1.5rem 2.5rem;
+}
