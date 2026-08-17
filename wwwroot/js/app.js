@@ -121,9 +121,24 @@ function scrollToTop() {
     if (mainContent) mainContent.scrollTop = 0;
 }
 
+// Auth Guard Helper - Prompt Login Modal for Guests
+function requireAuth(msg = '⚠️ Vui lòng đăng nhập hoặc đăng ký tài khoản học sinh để sử dụng tính năng này!') {
+    if (!currentUser || !currentUser.id) {
+        openAuthModal('login');
+        showAuthAlert(msg);
+        return false;
+    }
+    return true;
+}
+
 // Navigation Helper
 function navTo(viewId, event) {
     if (event) event.preventDefault();
+
+    // Check auth for protected views (progress & lesson player)
+    if ((viewId === 'progress-view' || viewId === 'lesson-player-view') && !requireAuth()) {
+        return;
+    }
 
     // Auto pause any running video when switching view tabs
     pauseAllVideos();
@@ -274,6 +289,10 @@ async function loadSubjects(classId) {
 
 // Open Subject & Load Lesson Tree Player (Switches to Dedicated Lesson Player View Page)
 async function openSubject(subjectId, subjectName) {
+    if (!requireAuth('⚠️ Vui lòng đăng nhập hoặc đăng ký tài khoản học sinh để bắt đầu học bài!')) {
+        return;
+    }
+
     pauseAllVideos();
     currentSubjectId = subjectId;
     document.getElementById('breadcrumb-subject').innerText = subjectName;
@@ -508,6 +527,10 @@ document.addEventListener('fullscreenchange', () => {
 
 // Start Online Exam with Countdown Timer & Single-Question Step-by-Step TTS Wizard
 async function startExam(examId) {
+    if (!requireAuth('⚠️ Vui lòng đăng nhập tài khoản học sinh trước khi bắt đầu làm bài thi!')) {
+        return;
+    }
+
     try {
         const res = await fetch(`${API_BASE}/exams/${examId}`);
         currentExam = await res.json();
